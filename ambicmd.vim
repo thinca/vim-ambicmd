@@ -20,6 +20,9 @@ set cpo&vim
 
   "startinsert!
 "endfunction"}}}
+"
+" cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+" cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
 function! ambicmd#expand(key)
   " TODO: The check is incomplete.
   let line = mode() ==# 'c' ? getcmdline() : getline('.')
