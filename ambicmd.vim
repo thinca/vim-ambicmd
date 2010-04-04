@@ -1,32 +1,21 @@
 " You can use ambiguous command.
-" Version: 0.1.0
+" Version: 0.2.0
 " Author : thinca <thinca+vim@gmail.com>
+"          Shougo <Shougo.Matsu (at) gmail.com>
 " License: Creative Commons Attribution 2.1 Japan License
 "          <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
-
-if exists('g:loaded_ambicmd') || v:version < 702
-  finish
-endif
-let g:loaded_ambicmd = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 " Ambiguous command.
-function! s:ambicmd(key)
-  if getcmdtype() != ':'
-    return a:key
-  endif
-
+function! ambicmd#define(key)
   " TODO: The check is incomplete.
-  let cmd = matchstr(getcmdline()[:getcmdpos()], '^\S\{-}\zs\a\w*')
+  let cmd = matchstr(getline()[:col('.')-1], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
-  if cmd == '' || state == 1 || state == 2
+  if cmd == '' || state == 1 || state == 2 || state == 3
     return a:key
-  endif
-  if state == 3
-    return "\<C-d>"
   endif
 
   " Get command list.
@@ -45,16 +34,12 @@ function! s:ambicmd(key)
   \ '.*' . substitute(cmd, '.', '\0.*', 'g')]
     let filtered = filter(copy(cmdlist), 'v:val =~? ' . string(pat))
     if len(filtered) == 1
-      return repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
+      return (pumvisible() ? "\<C-y>" : '') . repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
     endif
   endfor
 
   return a:key
 endfunction
-
-" TODO: Uncustomizable.
-cnoremap <expr> <Space> <SID>ambicmd("\<Space>")
-
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
