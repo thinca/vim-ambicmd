@@ -2,6 +2,7 @@
 " Version: 0.2.0
 " Author : thinca <thinca+vim@gmail.com>
 "          Shougo <Shougo.Matsu (at) gmail.com>
+"          tyru   <tyru.exe@gmail.com>
 " License: Creative Commons Attribution 2.1 Japan License
 "          <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
 " Install: copy to autoload/ambicmd.vim
