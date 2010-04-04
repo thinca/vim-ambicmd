@@ -21,7 +21,9 @@ set cpo&vim
 "endfunction"}}}
 function! ambicmd#expand(key)
   " TODO: The check is incomplete.
-  let cmd = matchstr(getline()[:col('.')-1], '^\S\{-}\zs\a\w*')
+  let line = mode() ==# 'c' ? getcmdline() : getline('.')
+  let pos  = mode() ==# 'c' ? getcmdpos()  : col('.') - 1
+  let cmd = matchstr(line[:pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
   if cmd == '' || state == 1 || state == 2 || state == 3
@@ -44,7 +46,11 @@ function! ambicmd#expand(key)
   \ '.*' . substitute(cmd, '.', '\0.*', 'g')]
     let filtered = filter(copy(cmdlist), 'v:val =~? ' . string(pat))
     if len(filtered) == 1
-      return (pumvisible() ? "\<C-y>" : '') . repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
+      let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
+      if mode() !=# 'c'
+        let ret = (pumvisible() ? "\<C-y>" : '') . ret
+      endif
+      return ret
     endif
   endfor
 
