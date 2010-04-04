@@ -4,12 +4,22 @@
 "          Shougo <Shougo.Matsu (at) gmail.com>
 " License: Creative Commons Attribution 2.1 Japan License
 "          <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
+" Install: copy to autoload/ambicmd.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-" Ambiguous command.
-function! ambicmd#define(key)
+" Expand ambiguous command.
+" Example:
+" autocmd CmdwinEnter * call s:init_cmdwin()
+"function! s:init_cmdwin()
+  "" Ambicmd.
+  "inoremap <buffer><expr> <Space> ambicmd#expand("\<Space>")
+  "inoremap <buffer><expr> <CR> ambicmd#expand("\<CR>")
+
+  "startinsert!
+"endfunction"}}}
+function! ambicmd#expand(key)
   " TODO: The check is incomplete.
   let cmd = matchstr(getline()[:col('.')-1], '^\S\{-}\zs\a\w*')
 
