@@ -48,6 +48,7 @@ function! ambicmd#expand(key)
   let cmdlist = map(split(cmdlistredir, "\n")[1:],
         \ 'matchstr(v:val, ''\a\w*'')')
 
+  let first_matched = []
   " Search matching.
   for pat in [
   \ '\c^' . cmd . '$',
@@ -62,8 +63,21 @@ function! ambicmd#expand(key)
         let ret = (pumvisible() ? "\<C-y>" : '') . ret
       endif
       return ret
+    elseif empty(first_matched) && !empty(filtered)
+      let first_matched = filtered
     endif
   endfor
+
+  " Expand the head of common part.
+  if !empty(first_matched)
+    let common = first_matched[0]
+    for str in first_matched[1 :]
+      let common = matchstr(common, '\%[' . str . ']')
+    endfor
+    if len(cmd) < len(common)
+      return repeat("\<BS>", len(cmd)) . common
+    endif
+  endif
 
   return a:key
 endfunction
