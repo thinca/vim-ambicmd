@@ -25,8 +25,9 @@ set cpo&vim
 " cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
 function! ambicmd#expand(key)
   " TODO: The check is incomplete.
-  let line = mode() ==# 'c' ? getcmdline() : getline('.')
-  let pos  = mode() ==# 'c' ? getcmdpos()  : col('.') - 1
+  let cmdline = mode() ==# 'c'
+  let line = cmdline ? getcmdline() : getline('.')
+  let pos  = cmdline ? getcmdpos()  : col('.') - 1
   let cmd = matchstr(line[:pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
@@ -51,7 +52,7 @@ function! ambicmd#expand(key)
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     if len(filtered) == 1
       let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
-      if mode() !=# 'c'
+      if !cmdline
         let ret = (pumvisible() ? "\<C-y>" : '') . ret
       endif
       return ret
