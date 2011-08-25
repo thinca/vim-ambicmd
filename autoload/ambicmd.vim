@@ -48,7 +48,7 @@ function! ambicmd#expand(key)
   \ '\C^' . substitute(toupper(cmd), '.', '\0\\l*', 'g') . '$',
   \ '\C' . substitute(toupper(cmd), '.', '\0\\l*', 'g'),
   \ '.*' . substitute(cmd, '.', '\0.*', 'g')]
-    let filtered = filter(copy(cmdlist), 'v:val =~? ' . string(pat))
+    let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     if len(filtered) == 1
       let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
       if mode() !=# 'c'
