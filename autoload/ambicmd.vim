@@ -24,16 +24,16 @@ set cpo&vim
 " cnoremap <expr> <Space> ambicmd#expand("\<Space>")
 " cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
 function! ambicmd#expand(key)
-  " TODO: The check is incomplete.
   let cmdline = mode() ==# 'c'
   if cmdline && getcmdtype() != ':'
     return a:key
   endif
-  let line = cmdline ? getcmdline() : getline('.')
+  let line =  cmdline ? getcmdline() : getline('.')
   let pos  = (cmdline ? getcmdpos()  : col('.')) - 1
   if line[pos] =~# '\S'
     return a:key
   endif
+  " TODO: The check is incomplete.
   let cmd = matchstr(line[: pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
@@ -45,11 +45,12 @@ function! ambicmd#expand(key)
   redir => cmdlistredir
   silent! command
   redir END
-  let cmdlist = map(split(cmdlistredir, "\n")[1:],
-        \ 'matchstr(v:val, ''\a\w*'')')
+  let cmdlist = map(split(cmdlistredir, "\n")[1 :],
+  \                 'matchstr(v:val, ''\a\w*'')')
 
   let first_matched = []
   " Search matching.
+  " TODO: Customizable?
   for pat in [
   \ '\c^' . cmd . '$',
   \ cmd,
@@ -83,4 +84,3 @@ function! ambicmd#expand(key)
 endfunction
 
 let &cpo = s:save_cpo
-unlet s:save_cpo
