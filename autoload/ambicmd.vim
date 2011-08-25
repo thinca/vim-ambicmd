@@ -26,6 +26,9 @@ set cpo&vim
 function! ambicmd#expand(key)
   " TODO: The check is incomplete.
   let cmdline = mode() ==# 'c'
+  if cmdline && getcmdtype() != ':'
+    return a:key
+  endif
   let line = cmdline ? getcmdline() : getline('.')
   let pos  = (cmdline ? getcmdpos()  : col('.')) - 1
   if line[pos] =~# '\S'
