@@ -27,8 +27,8 @@ function! ambicmd#expand(key)
   " TODO: The check is incomplete.
   let cmdline = mode() ==# 'c'
   let line = cmdline ? getcmdline() : getline('.')
-  let pos  = cmdline ? getcmdpos()  : col('.') - 1
-  let cmd = matchstr(line[:pos], '^\S\{-}\zs\a\w*')
+  let pos  = (cmdline ? getcmdpos()  : col('.')) - 1
+  let cmd = matchstr(line[: pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
   if cmd == '' || state == 1 || state == 2 || state == 3
