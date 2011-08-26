@@ -37,7 +37,7 @@ function! ambicmd#expand(key)
   let cmd = matchstr(line[: pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
-  if cmd == '' || state == 1 || state == 2 || state == 3
+  if cmd == '' || state == 1 || state == 2
     return a:key
   endif
 
@@ -73,9 +73,9 @@ function! ambicmd#expand(key)
   if !empty(first_matched)
     let common = first_matched[0]
     for str in first_matched[1 :]
-      let common = matchstr(common, '\%[' . str . ']')
+      let common = matchstr(common, '^\%[' . str . ']')
     endfor
-    if len(cmd) < len(common)
+    if len(cmd) <= len(common) && cmd !=# common
       return repeat("\<BS>", len(cmd)) . common . "\<C-d>"
     endif
   endif
