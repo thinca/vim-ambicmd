@@ -10,6 +10,20 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+if !exists('g:ambicmd#build_rule')
+  let g:ambicmd#build_rule = 'ambicmd#default_rule'
+endif
+
+function! ambicmd#default_rule(cmd)
+  return [
+  \   '\c^' . a:cmd . '$',
+  \   a:cmd,
+  \   '\C^' . substitute(toupper(a:cmd), '.', '\0\\l*', 'g') . '$',
+  \   '\C' . substitute(toupper(a:cmd), '.', '\0\\l*', 'g'),
+  \   '.*' . substitute(a:cmd, '.', '\0.*', 'g')
+  \ ]
+endfunction
+
 " Expand ambiguous command.
 " Example:
 " autocmd CmdwinEnter * call s:init_cmdwin()
@@ -50,13 +64,7 @@ function! ambicmd#expand(key)
 
   let first_matched = []
   " Search matching.
-  " TODO: Customizable?
-  for pat in [
-  \ '\c^' . cmd . '$',
-  \ cmd,
-  \ '\C^' . substitute(toupper(cmd), '.', '\0\\l*', 'g') . '$',
-  \ '\C' . substitute(toupper(cmd), '.', '\0\\l*', 'g'),
-  \ '.*' . substitute(cmd, '.', '\0.*', 'g')]
+  for pat in call(g:ambicmd#build_rule, [cmd], {})
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     if len(filtered) == 1
       let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
