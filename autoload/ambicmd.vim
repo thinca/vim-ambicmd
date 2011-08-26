@@ -76,7 +76,7 @@ function! ambicmd#expand(key)
       let common = matchstr(common, '\%[' . str . ']')
     endfor
     if len(cmd) < len(common)
-      return repeat("\<BS>", len(cmd)) . common
+      return repeat("\<BS>", len(cmd)) . common . "\<C-d>"
     endif
   endif
 
