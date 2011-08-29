@@ -63,7 +63,6 @@ function! ambicmd#expand(key)
   \                 'matchstr(v:val, ''\a\w*'')')
 
   let g:ambicmd#last_filtered = []
-  let first_matched = []
   " Search matching.
   for pat in call(g:ambicmd#build_rule, [cmd], {})
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
@@ -74,21 +73,22 @@ function! ambicmd#expand(key)
         let ret = (pumvisible() ? "\<C-y>" : '') . ret
       endif
       return ret
-    elseif empty(first_matched) && !empty(filtered)
-      let first_matched = filtered
     endif
   endfor
 
   " Expand the head of common part.
-  if !empty(first_matched)
-    let common = first_matched[0]
-    for str in first_matched[1 :]
+  for filtered in g:ambicmd#last_filtered
+    if empty(filtered)
+      continue
+    endif
+    let common = filtered[0]
+    for str in filtered[1 :]
       let common = matchstr(common, '^\C\%[' . str . ']')
     endfor
     if len(cmd) <= len(common) && cmd !=# common
       return repeat("\<BS>", len(cmd)) . common . "\<C-d>"
     endif
-  endif
+  endfor
 
   return a:key
 endfunction
