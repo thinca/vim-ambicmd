@@ -51,7 +51,7 @@ function! ambicmd#expand(key)
   let cmd = matchstr(line[: pos], '^\S\{-}\zs\a\w*')
 
   let state = exists(':' . cmd)
-  if cmd == '' || state == 1 || state == 2
+  if cmd == '' || (cmd =~# '^\l' && state == 1) || state == 2
     return a:key
   endif
 
