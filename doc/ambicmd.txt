@@ -1,0 +1,157 @@
+*ambicmd.txt*	You can use ambiguous command.
+
+Version: 0.2.0
+Author : thinca <thinca+vim@gmail.com>
+         Shougo <Shougo.Matsu (at) gmail.com>
+         tyru   <tyru.exe@gmail.com>
+License: Creative Commons Attribution 2.1 Japan License
+         <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
+
+==============================================================================
+CONTENTS					*ambicmd-contents*
+
+INTRODUCTION			|ambicmd-introduction|
+INTERFACE			|ambicmd-interface|
+  FUNCTIONS			  |ambicmd-functions|
+CUSTOMIZING			|ambicmd-customizing|
+EXPANDING RULE			|ambicmd-expanding-rule|
+SETTING EXAMPLES		|ambicmd-setting-examples|
+TODO				|ambicmd-todo|
+CHANGELOG			|ambicmd-changelog|
+
+
+
+==============================================================================
+INTRODUCTION					*ambicmd-introduction*
+
+*ambicmd* is a Vim plugin to use ambiguous command.
+Some plugins provide many useful command, but sometimes these are very long.
+At this time, you will define the key mappings to execute these. but:
+
+- You will have to define quite a lot of key mappings.
+- You should find unused key sequence for mapping.
+- Do you define a key mapping for a command only occasionally used?
+
+This plugin expands a ambiguous command by some patterns.  For example,
+>
+	("|" is cursor)
+	" Expands to the correct name from the lowercase.
+	:ref<Space>  =>  :Ref |
+
+	" Expands from the capital letter of the command.
+	:qr<Space>   =>  :QuickRun |
+
+	" There are some commands with "NeoComplCache" prefix.
+	:ncc<Space>  =>  :NeoComplCache|
+<
+See |ambicmd-expanding-rule| about the expanding rule.
+Note that you need write some setting in vimrc.  This plugin do nothing by
+default.  Please see |ambicmd-setting-examples|.
+
+
+Requirements:
+- Vim 7.3 or later
+
+Latest version:
+https://github.com/thinca/vim-ambicmd
+
+
+
+==============================================================================
+INTERFACE					*ambicmd-interface*
+
+------------------------------------------------------------------------------
+FUNCTIONS					*ambicmd-functions*
+
+ambicmd#expand({key-sequence})			*ambicmd#expand()*
+	Expands the command.
+	- If the cursor position is not just behind a command, returns
+	  {key-sequence} directly.
+	- If the expanding succeeded, returns the command and {key-sequence}.
+	- If the candidates of the command starts by the same phrase, returns
+	  it and <C-d>.
+	- Otherwise returns {key-sequence}.
+	See also |ambicmd-setting-examples|.
+
+
+
+==============================================================================
+CUSTOMIZING					*ambicmd-customizing*
+
+g:ambicmd#build_rule				*g:ambicmd#build_rule*
+	String of function name that returns the rule.  The function takes a
+	command as argument, and returns a list of pattern.
+	See |ambicmd-expanding-rule| for the details.
+	The default value is "ambicmd#default_rule".
+
+
+
+==============================================================================
+EXPANDING RULE					*ambicmd-expanding-rule*
+
+The rule is a list of regexp pattern.  All of user-defined command is filtered
+by the first pattern.  The pattern matching is done with |=~?|.  If the
+command is narrowed to one, it expand to the command.  Otherwise, the next
+pattern is tried like same.
+When the rule can not decide the only command, searches from the non empty
+first result for a common first part.  It is expanded when it is found.
+Otherwise, nothing is done.
+
+
+
+==============================================================================
+SETTING EXAMPLES				*ambicmd-setting-examples*
+
+Expands ambiguous command with <Space> and <CR>.
+>
+	cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+	cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+<
+Mapping <C-f> to <Right> with ambicmd.
+>
+	cnoremap <expr> <C-f> ambicmd#expand("\<Right>")
+>
+Use in |cmdline-window|.
+>
+	autocmd CmdwinEnter * call s:init_cmdwin()
+	function! s:init_cmdwin()
+	  inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
+	  inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
+
+	  startinsert!
+	endfunction
+<
+
+
+==============================================================================
+TODO						*ambicmd-todo*
+
+- Improves the expanding rule.
+  - Any idea?
+
+- Improves the detecting of input of command.
+  - :1,/pattern/Command
+  - :g/pattern/Command
+  - But these is very hard...
+  - If you want to avoid the expanding, please input it like <C-v><Space>.
+
+
+
+==============================================================================
+CHANGELOG					*ambicmd-changelog*
+
+x.x.x	xxxx-xx-xx
+	- Improved some behavior.
+	- Expands the head of common parts.
+	- Expanding rule was made customizable.
+	- Added this document.
+
+0.2.0	2010-04-04
+	- Supported |cmdline-window|.
+
+0.1.0	2010-04-04
+	- Initial version.
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
