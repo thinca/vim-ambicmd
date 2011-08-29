@@ -62,10 +62,12 @@ function! ambicmd#expand(key)
   let cmdlist = map(split(cmdlistredir, "\n")[1 :],
   \                 'matchstr(v:val, ''\a\w*'')')
 
+  let g:ambicmd#last_filtered = []
   let first_matched = []
   " Search matching.
   for pat in call(g:ambicmd#build_rule, [cmd], {})
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
+    call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
       let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
       if !cmdline
