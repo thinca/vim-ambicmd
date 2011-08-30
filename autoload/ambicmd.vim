@@ -60,6 +60,7 @@ function! ambicmd#expand(key)
       if !cmdline
         let ret = (pumvisible() ? "\<C-y>" : '') . ret
       endif
+      redraw
       return ret
     endif
   endfor
