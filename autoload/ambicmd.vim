@@ -16,7 +16,8 @@ endif
 function! ambicmd#default_rule(cmd)
   return [
   \   '\c^' . a:cmd . '$',
-  \   a:cmd,
+  \   '\c^' . a:cmd,
+  \   '\c' . a:cmd,
   \   '\C^' . substitute(toupper(a:cmd), '.', '\0\\l*', 'g') . '$',
   \   '\C' . substitute(toupper(a:cmd), '.', '\0\\l*', 'g'),
   \   '.*' . substitute(a:cmd, '.', '\0.*', 'g')
