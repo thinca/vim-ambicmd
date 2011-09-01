@@ -24,6 +24,14 @@ function! ambicmd#default_rule(cmd)
   \ ]
 endfunction
 
+if exists('*strchars')
+  let s:strchars = function('strchars')
+else
+  function! s:strchars(s)
+    return len(substitute(a:s, '.', '.', 'g'))
+  endfunction
+endif
+
 " Expand ambiguous command.
 function! ambicmd#expand(key)
   let cmdline = mode() ==# 'c'
@@ -56,7 +64,7 @@ function! ambicmd#expand(key)
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
-      let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
+      let ret = repeat("\<BS>", s:strchars(cmd)) . filtered[0] . a:key
       if !cmdline
         let ret = (pumvisible() ? "\<C-y>" : '') . ret
       endif
@@ -73,8 +81,8 @@ function! ambicmd#expand(key)
     for str in filtered[1 :]
       let common = matchstr(common, '^\C\%[' . str . ']')
     endfor
-    if len(cmd) <= len(common) && cmd !=# common
-      return repeat("\<BS>", len(cmd)) . common . "\<C-d>"
+    if s:strchars(cmd) <= s:strchars(common) && cmd !=# common
+      return repeat("\<BS>", s:strchars(cmd)) . common . "\<C-d>"
     endif
   endfor
 
