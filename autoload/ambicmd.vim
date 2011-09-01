@@ -36,7 +36,7 @@ function! ambicmd#expand(key)
     return a:key
   endif
   " TODO: The check is incomplete.
-  let cmd = matchstr(line[: pos], '^\S\{-}\zs\a\w*$')
+  let cmd = matchstr(line[: pos - 1], '^\S\{-}\zs\a\w*$')
 
   let state = exists(':' . cmd)
   if cmd == '' || (cmd =~# '^\l' && state == 1) || state == 2
