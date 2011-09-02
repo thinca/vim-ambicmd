@@ -53,7 +53,7 @@ function! ambicmd#expand(key)
   silent! command
   redir END
   let cmdlist = map(split(cmdlistredir, "\n")[1 :],
-  \                 'matchstr(v:val, ''\a\w*'')')
+  \                 'matchstr(v:val, ''\u\w*'')')
 
   let g:ambicmd#last_filtered = []
   " Search matching.
