@@ -24,6 +24,12 @@ function! ambicmd#default_rule(cmd)
   \ ]
 endfunction
 
+let s:search_pattern = '\v/[^/]*\\@<!%(\\\\)*/|\?[^?]*\\@<!%(\\\\)*\?'
+let s:line_specifier =
+\   '\v%(\d+|[.$%]|''\a|\\[/?&])?%([+-]\d*|' . s:search_pattern . ')*'
+let s:range = '\v%(' . s:line_specifier . '%([;,]' . s:line_specifier . ')*)?'
+let s:command_extractor = '\v^' . s:range . '\zs\a\w*$'
+
 " Expand ambiguous command.
 function! ambicmd#expand(key)
   let cmdline = mode() ==# 'c'
@@ -35,8 +41,7 @@ function! ambicmd#expand(key)
   if line[pos] =~# '\S'
     return a:key
   endif
-  " TODO: The check is incomplete.
-  let cmd = matchstr(line[: pos - 1], '^\S\{-}[![:alpha:]]\@<!\zs\a\w*$')
+  let cmd = matchstr(line[: pos - 1], s:command_extractor)
 
   let state = exists(':' . cmd)
   if cmd == '' || (cmd =~# '^\l' && state == 1) || state == 2

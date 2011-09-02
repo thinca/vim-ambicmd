@@ -130,7 +130,6 @@ TODO						*ambicmd-todo*
   - Any idea?
 
 - Improves the detecting of input of command.
-  - :1,/pattern/Command
   - :g/pattern/Command
   - But these is very hard...
   - If you want to avoid the expanding, please input it like <C-v><Space>.
