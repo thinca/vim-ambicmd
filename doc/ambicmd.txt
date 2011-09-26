@@ -1,6 +1,6 @@
 *ambicmd.txt*	You can use ambiguous command.
 
-Version: 0.3.0
+Version: 0.4.0
 Author : thinca <thinca+vim@gmail.com>
          Shougo <Shougo.Matsu (at) gmail.com>
          tyru   <tyru.exe@gmail.com>
@@ -138,6 +138,11 @@ TODO						*ambicmd-todo*
 
 ==============================================================================
 CHANGELOG					*ambicmd-changelog*
+
+0.4.0	2011-09-26
+	- Fixed for buffer-local command is not expanded.
+	- Improved the default rule.
+	- Improved some behavior.
 
 0.3.0	2011-08-29
 	- Improved some behavior.
