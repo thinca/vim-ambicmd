@@ -63,8 +63,8 @@ function! ambicmd#expand(key)
     call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
       let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
-      if !cmdline
-        let ret = (pumvisible() ? "\<C-y>" : '') . ret
+      if !cmdline && pumvisible()
+        let ret = "\<C-y>" . ret
       endif
       return ret
     endif
