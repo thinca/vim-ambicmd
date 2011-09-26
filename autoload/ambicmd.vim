@@ -56,17 +56,14 @@ function! ambicmd#expand(key)
   let cmdlist = map(split(cmdlistredir, "\n")[1 :],
   \                 'matchstr(v:val, ''\u\w*'')')
 
+  let prekey = !cmdline && pumvisible() ? "\<C-y>" : ''
   let g:ambicmd#last_filtered = []
   " Search matching.
   for pat in call(g:ambicmd#build_rule, [cmd], {})
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
-      let ret = repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
-      if !cmdline && pumvisible()
-        let ret = "\<C-y>" . ret
-      endif
-      return ret
+      return prekey . repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
     endif
   endfor
 
@@ -80,7 +77,7 @@ function! ambicmd#expand(key)
       let common = matchstr(common, '^\C\%[' . str . ']')
     endfor
     if len(cmd) <= len(common)
-      return repeat("\<BS>", len(cmd)) . common . "\<C-d>"
+      return prekey . repeat("\<BS>", len(cmd)) . common . "\<C-d>"
     endif
   endfor
 
