@@ -26,7 +26,7 @@ endfunction
 
 let s:search_pattern = '\v/[^/]*\\@<!%(\\\\)*/|\?[^?]*\\@<!%(\\\\)*\?'
 let s:line_specifier =
-\   '\v%(\d+|[.$]|''\a|\\[/?&])?%([+-]\d*|' . s:search_pattern . ')*'
+\   '\v%(\d+|[.$]|''\S|\\[/?&])?%([+-]\d*|' . s:search_pattern . ')*'
 let s:range = '\v%(\%|' . s:line_specifier .
 \              '%([;,]' . s:line_specifier . ')*)?'
 let s:command_extractor = '\v^' . s:range . '\zs\a\w*$'
