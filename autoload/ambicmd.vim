@@ -1,5 +1,5 @@
 " You can use ambiguous command.
-" Version: 0.4.0
+" Version: 0.5.0
 " Authors: thinca <thinca+vim@gmail.com>
 "          Shougo <Shougo.Matsu (at) gmail.com>
 "          tyru   <tyru.exe@gmail.com>
