@@ -29,7 +29,7 @@ let s:line_specifier =
 \   '\v%(\d+|[.$]|''\S|\\[/?&])?%([+-]\d*|' . s:search_pattern . ')*'
 let s:range = '\v%(\%|' . s:line_specifier .
 \              '%([;,]' . s:line_specifier . ')*)?'
-let s:command_extractor = '\v^' . s:range . '\zs\a\w*$'
+let s:command_extractor = '\v^' . s:range . '\zs\a\w*!?$'
 
 " Expand ambiguous command.
 function! ambicmd#expand(key)
@@ -42,7 +42,8 @@ function! ambicmd#expand(key)
   if line[pos] =~# '\S'
     return a:key
   endif
-  let cmd = matchstr(line[: pos - 1], s:command_extractor)
+  let cmdb = matchstr(line[: pos - 1], s:command_extractor)
+  let [cmd, bang] = matchlist(cmdb, '^\(.\{-}\)\(!\?\)$')[1 : 2]
 
   let state = exists(':' . cmd)
   if cmd == '' || (cmd =~# '^\l' && state == 1) || state == 2
@@ -63,7 +64,8 @@ function! ambicmd#expand(key)
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
     call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
-      return prekey . repeat("\<BS>", strlen(cmd)) . filtered[0] . a:key
+      let newcmd = filtered[0] . bang
+      return prekey . repeat("\<BS>", strlen(cmdb)) . newcmd . a:key
     endif
   endfor
 
@@ -77,7 +79,7 @@ function! ambicmd#expand(key)
       let common = matchstr(common, '^\C\%[' . str . ']')
     endfor
     if len(cmd) <= len(common)
-      return prekey . repeat("\<BS>", len(cmd)) . common . "\<C-d>"
+      return prekey . repeat("\<BS>", len(cmdb)) . common . "\<C-d>"
     endif
   endfor
 

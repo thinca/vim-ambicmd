@@ -139,6 +139,9 @@ TODO						*ambicmd-todo*
 ==============================================================================
 CHANGELOG					*ambicmd-changelog*
 
+x.x	xxxx-xx-xx
+	- Accepts bang(!) of command.
+
 0.4.0	2011-09-26
 	- Fixed for buffer-local command is not expanded.
 	- Improved the default rule.
