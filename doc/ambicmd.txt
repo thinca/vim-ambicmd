@@ -1,7 +1,7 @@
 *ambicmd.txt*	You can use ambiguous command.
 
 Version: 0.4.0
-Author : thinca <thinca+vim@gmail.com>
+Authors: thinca <thinca+vim@gmail.com>
          Shougo <Shougo.Matsu (at) gmail.com>
          tyru   <tyru.exe@gmail.com>
 License: Creative Commons Attribution 2.1 Japan License
