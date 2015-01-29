@@ -32,7 +32,7 @@ let s:command_extractor = '\v^' . s:range . '\zs\a\w*!?$'
 
 " Expand ambiguous command.
 function! ambicmd#expand(key)
-  let cmdline = mode() ==# 'c'
+  let cmdline = index(['c', 'v', 'V', "\<c-v>"], mode()) != -1
   if cmdline && getcmdtype() != ':'
     return a:key
   endif
