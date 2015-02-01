@@ -65,7 +65,7 @@ function! ambicmd#expand(key)
     call add(g:ambicmd#last_filtered, filtered)
     if len(filtered) == 1
       let newcmd = filtered[0] . bang
-      return prekey . repeat("\<BS>", strlen(cmdb)) . newcmd . a:key
+      return prekey . repeat("\<C-h>", strlen(cmdb)) . newcmd . a:key
     endif
   endfor
 
@@ -79,7 +79,7 @@ function! ambicmd#expand(key)
       let common = matchstr(common, '^\C\%[' . str . ']')
     endfor
     if len(cmd) <= len(common)
-      return prekey . repeat("\<BS>", len(cmdb)) . common . "\<C-d>"
+      return prekey . repeat("\<C-h>", len(cmdb)) . common . "\<C-d>"
     endif
   endfor
 
