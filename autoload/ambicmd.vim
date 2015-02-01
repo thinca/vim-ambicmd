@@ -58,11 +58,11 @@ function! ambicmd#expand(key)
   \                 'matchstr(v:val, ''\u\w*'')')
 
   let prekey = !cmdline && pumvisible() ? "\<C-y>" : ''
-  let g:ambicmd#last_filtered = []
+  let filtered_lists = []
   " Search matching.
   for pat in call(g:ambicmd#build_rule, [cmd], {})
     let filtered = filter(copy(cmdlist), 'v:val =~? pat')
-    call add(g:ambicmd#last_filtered, filtered)
+    call add(filtered_lists, filtered)
     if len(filtered) == 1
       let newcmd = filtered[0] . bang
       return prekey . repeat("\<C-h>", strlen(cmdb)) . newcmd . a:key
@@ -70,7 +70,7 @@ function! ambicmd#expand(key)
   endfor
 
   " Expand the head of common part.
-  for filtered in g:ambicmd#last_filtered
+  for filtered in filtered_lists
     if empty(filtered)
       continue
     endif
