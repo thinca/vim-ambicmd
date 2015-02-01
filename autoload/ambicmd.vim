@@ -50,12 +50,7 @@ function! ambicmd#expand(key)
     return a:key
   endif
 
-  " Get command list.
-  redir => cmdlistredir
-  silent! command
-  redir END
-  let cmdlist = map(split(cmdlistredir, "\n")[1 :],
-  \                 'matchstr(v:val, ''\u\w*'')')
+  let cmdlist = s:get_cmd_list()
 
   let prekey = !cmdline && pumvisible() ? "\<C-y>" : ''
   let filtered_lists = []
@@ -84,6 +79,14 @@ function! ambicmd#expand(key)
   endfor
 
   return a:key
+endfunction
+
+function! s:get_cmd_list() abort
+  redir => cmdlistredir
+  silent! command
+  redir END
+  return map(split(cmdlistredir, "\n")[1 :],
+  \          'matchstr(v:val, ''\u\w*'')')
 endfunction
 
 let &cpo = s:save_cpo
