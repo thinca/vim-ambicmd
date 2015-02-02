@@ -1,0 +1,41 @@
+call themis#helper('command').with(themis#helper('assert'))
+
+Describe ambicmd.vim
+  Before all
+    command! FooFoo put ='FooFoo'
+    command! FooBar put ='FooBar'
+    command! Hoge put ='Hoge'
+    command! -nargs=1 Put put ='<args>'
+
+    cnoremap <expr> @ ambicmd#expand('') . '<CR>'
+  End
+
+  Before each
+    silent % delete _
+  End
+
+  Context in Command-line mode
+    It expands ambiguous command to strict command
+      normal :hoge@
+      Assert Equals(getline('.'), 'Hoge')
+    End
+
+    It completes the common head of the ambiguous commands
+      Throws /^Vim:E464/ :normal :foo@
+    End
+
+    It does not expand at the argument
+      normal :Put hoge@
+      Assert Equals(getline('.'), 'hoge')
+    End
+  End
+
+  Context in searching of Visual mode
+    It does not expand
+      0 put = ['hoge ', 'hoge', 'Hoge']
+      call cursor(1, 5)
+      normal v/hoge@
+      Assert Equals(line('.'), 2)
+    End
+  End
+End
