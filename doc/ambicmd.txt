@@ -1,6 +1,6 @@
 *ambicmd.txt*	You can use ambiguous command.
 
-Version: 0.5.0
+Version: 0.5.1
 Authors: thinca <thinca+vim@gmail.com>
          Shougo <Shougo.Matsu (at) gmail.com>
          tyru   <tyru.exe@gmail.com>
@@ -138,7 +138,10 @@ TODO						*ambicmd-todo*
 ==============================================================================
 CHANGELOG					*ambicmd-changelog*
 
-0.5.0	2011-12-24
+0.5.1	2015-02-07
+	- Fix problem in Visual-mode.
+
+0.5.1	2011-12-24
 	- Accepts bang(!) of command.
 
 0.4.0	2011-09-26
