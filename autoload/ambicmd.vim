@@ -34,7 +34,7 @@ let s:command_extractor = '\v^' . s:range . '\zs\a\w*!?$'
 function! ambicmd#expand(key)
   " 'v'/'V'/'<C-v>' are used used by a search by a visual mode.
   let cmdline = index(['c', 'v', 'V', "\<C-v>"], mode()) != -1
-  if cmdline && getcmdtype() != ':'
+  if cmdline && getcmdtype() !=# ':'
     return a:key
   endif
   let line =  cmdline ? getcmdline() : getline('.')
@@ -46,7 +46,7 @@ function! ambicmd#expand(key)
   let [cmd, bang] = matchlist(cmdb, '^\(.\{-}\)\(!\?\)$')[1 : 2]
 
   let state = exists(':' . cmd)
-  if cmd == '' || (cmd =~# '^\l' && state == 1) || state == 2
+  if cmd ==# '' || (cmd =~# '^\l' && state == 1) || state == 2
     return a:key
   endif
 
