@@ -5,9 +5,6 @@
 "          tyru   <tyru.exe@gmail.com>
 " License: zlib License
 
-let s:save_cpo = &cpo
-set cpo&vim
-
 if !exists('g:ambicmd#build_rule')
   let g:ambicmd#build_rule = 'ambicmd#default_rule'
 endif
@@ -88,5 +85,3 @@ function! s:get_cmd_list() abort
   return map(split(cmdlistredir, "\n")[1 :],
   \          'matchstr(v:val, ''\u\w*'')')
 endfunction
-
-let &cpo = s:save_cpo
