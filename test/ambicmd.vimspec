@@ -1,5 +1,223 @@
+let s:functions = themis#helper('scope').funcs('autoload/ambicmd.vim')
+call themis#func_alias(s:functions)
 call themis#helper('command').with(themis#helper('assert'))
 
+
+" NOTE: Don't use `:function!` in order not to overwrite.
+Describe s:str_divide_pos()
+  Before all
+    let StrDividePos = s:functions.str_divide_pos
+  End
+  It separates a string into two strings by position
+    let str = '0123456789'
+    Assert Equals(StrDividePos(str, 4), ['0123', '456789'])
+    Assert Equals(StrDividePos(str, 0), ['', '0123456789'])
+  End
+End
+Describe s:separate_cmd_bang()
+  Before all
+    function SeparateCmdBang(cmd)
+      return s:functions.separate_cmd_bang(a:cmd)
+    endfunction
+  End
+  It separates '!' if it's given
+    Assert Equals(SeparateCmdBang('cmd!'), ['cmd', '!'])
+  End
+  It does nothing if '!' isn't given
+    Assert Equals(SeparateCmdBang('cmd'), ['cmd', ''])
+  End
+  After all
+    delfunction SeparateCmdBang
+  End
+End
+Describe s:remove_range_specifier()
+  Before all
+    function RemoveRange(cmdline)
+      return s:functions.remove_range_specifier(a:cmdline)
+    endfunction
+  End
+  It removes range
+    let ranges = ['%', '$', '.', "'<,'>", '1,10', '1, 10', '4', '/hoge/',
+    \ '?fuga?', '\/', '\?', '\&']
+    let extensions = ['', '+3', '-1']
+    for range in ranges
+      for extension in extensions
+        let cmdline = range . extension . 'cmd'
+        Assert Equals(RemoveRange(cmdline), 'cmd')
+      endfor
+    endfor
+  End
+  It does nothing when range isn't provided
+    Assert Equals(RemoveRange('cmd'), 'cmd')
+  End
+  After all
+    delfunction RemoveRange
+  End
+End
+Describe s:parse_cmd()
+  Before all
+    function PickTarget(cmdline) abort
+      try
+        return s:functions.parse_cmd(a:cmdline)[0]
+      catch /^ambicmd\:\sCancelExpanding$/
+        return ''
+      endtry
+    endfunction
+  End
+  It picks the command
+    Assert Equals(PickTarget('cmd'), 'cmd')
+  End
+  It picks the command with '!'
+    Assert Equals(PickTarget('cmd!'), 'cmd')
+  End
+  It won't pick the command when inputting arguments
+    Assert Equals(PickTarget('cmd hoge'), '')
+  End
+  It doesn't allow leading spaces
+    Assert Equals(PickTarget(' cmd'), '')
+    Assert Equals(PickTarget('some_cmd| cmd'), '')
+    Assert Equals(PickTarget(' some_cmd|cmd'), 'cmd')
+    Assert Equals(PickTarget('% cmd'), '')
+    Assert Equals(PickTarget(' %cmd'), '')
+    Assert Equals(PickTarget(' some_cmd|% cmd'), '')
+    Assert Equals(PickTarget(' some_cmd| ''<,''>cmd'), '')
+    Assert Equals(PickTarget(' g/pat/ com'), '')
+    Assert Equals(PickTarget(' execute " com'), '')
+  End
+  It supports :global
+    Assert Equals(PickTarget('g/pat/cmd'), 'cmd')
+    Assert Equals(PickTarget('g/pat/cmd hoge'), '')
+    Assert Equals(PickTarget('g/pat/cmd'), 'cmd')
+  End
+  It supports :global!
+    Assert Equals(PickTarget('g!/pat/cmd'), 'cmd')
+    Assert Equals(PickTarget('g!/pat/cmd hoge'), '')
+    Assert Equals(PickTarget('g!/pat/cmd'), 'cmd')
+  End
+  It supports :vglobal
+    Assert Equals(PickTarget('v/pat/cmd'), 'cmd')
+    Assert Equals(PickTarget('v/pat/cmd hoge'), '')
+    Assert Equals(PickTarget('v/pat/cmd'), 'cmd')
+  End
+  It supports :global with its separator is not '/'
+    Assert Equals(PickTarget('g?pat?cmd'), 'cmd')
+  End
+  It supports :global with its separator is in {pattern} with escaped
+    Assert Equals(PickTarget('g/pat\/tern/cmd'), 'cmd')
+  End
+  It supports :global even if <bar> exists in {pattern}
+    Assert Equals(PickTarget('g/\v(pat|tern)/cmd'), 'cmd')
+  End
+  It picks nothing when pattern of :global hasn't finished yet
+    Assert Equals(PickTarget('g/\v(pat|tern'), '')
+  End
+  Context in :execute
+    It picks a command
+      Assert Equals(PickTarget('execute "cmd'), 'cmd')
+      Assert Equals(PickTarget("execute 'cmd"), 'cmd')
+    End
+    It picks nothing when inputting command's arguments
+      Assert Equals(PickTarget('execute "cmd args'), '')
+      Assert Equals(PickTarget("execute 'cmd args"), '')
+    End
+    It picks a command just after <bar>
+      Assert Equals(PickTarget('execute "another_cmd args|cmd'), 'cmd')
+      Assert Equals(PickTarget("execute 'another_cmd args|cmd"), 'cmd')
+    End
+    It supports string concatenation
+      Assert Equals(PickTarget('execute "some_cmd" "cmd'), 'cmd')
+      Assert Equals(PickTarget("execute 'some_cmd' 'cmd"), 'cmd')
+    End
+    It supports strings and variables in its arguments
+      Assert Equals(PickTarget('execute "string_arg" args'), '')
+      Assert Equals(PickTarget('execute args "string_arg"'), '')
+    End
+    It supports escaped quotes in arguments
+      Assert Equals(PickTarget('execute "string\"argument"|cmd'), 'cmd')
+      Assert Equals(PickTarget("execute 'string''argument'|cmd"), 'cmd')
+      Assert Equals(PickTarget("execute \"'<,'>cmd"), 'cmd')
+      Assert Equals(PickTarget("execute '''<,''>cmd"), 'cmd')
+    End
+  End
+  It can find the end of :execute
+    Assert Equals(PickTarget('execute "some_cmd"|cmd'), 'cmd')
+    Assert Equals(PickTarget("execute 'some_cmd'|cmd"), 'cmd')
+    Assert Equals(PickTarget("execute '%some_cmd'|cmd"), 'cmd')
+    Assert Equals(PickTarget("execute '''<,''>some_cmd'|cmd"), 'cmd')
+  End
+  It can find the end of :execute strings and variables as its arguments
+    Assert Equals(PickTarget('execute "string_arg" args|cmd'), 'cmd')
+    Assert Equals(PickTarget('execute args "string_arg"|cmd'), 'cmd')
+  End
+  It can find the end of :execute with variables as its arguments
+    Assert Equals(PickTarget('execute args|cmd'), 'cmd')
+    Assert Equals(PickTarget('execute args'), '')
+  End
+  It supports single quote in double-quoted string in :execute's arguments
+    Assert Equals(PickTarget('execute "string''arg"|cmd'), 'cmd')
+  End
+  It supports double quote in single-quoted string in :execute's arguments
+    Assert Equals(PickTarget("execute 'string\"arg'|cmd"), 'cmd')
+  End
+  It supports nested :execute
+    Assert Equals(PickTarget('execute "execute \"cmd'), 'cmd')
+    Assert Equals(PickTarget("execute 'execute ''cmd"), 'cmd')
+    Assert Equals(PickTarget('execute "execute \"some_cmd\""|cmd'), 'cmd')
+    Assert Equals(PickTarget("execute 'execute ''some_cmd'''|cmd"), 'cmd')
+  End
+  It picks the latest command
+    Assert Equals(PickTarget('before|cmd'), 'cmd')
+  End
+  It supports :global
+    Assert Equals(PickTarget('g/pat/before|cmd'), 'cmd')
+  End
+  It supports nested :global (Is it available in Vim?)
+    Assert Equals(PickTarget('g/pat/g/pat2/cmd'), 'cmd')
+    Assert Equals(PickTarget('g/pat/%g/pat2/cmd'), 'cmd')
+    Assert Equals(PickTarget('g/pat/before|g/pat2/cmd'), 'cmd')
+    Assert Equals(PickTarget('g/pat/before|%g/pat2/cmd'), 'cmd')
+  End
+  After all
+    delfunction PickTarget
+  End
+End
+Describe s:get_completion()
+  Before all
+    command! Hoge   echo 'Do nothing'
+    command! FooBar echo 'Do nothing'
+    command! FooBaz echo 'Do nothing'
+    command! FooFoo echo 'Do nothing'
+
+    function GetCompletion(target)
+      try
+        return s:functions.get_completion(a:target)
+      catch /^ambicmd\:\sCancelExpanding$/
+        return 0
+      endtry
+    endfunction
+  End
+  It expands an ambiguous command into a user-defined command
+    Assert Equals(GetCompletion('hoge'), ['Hoge', 1])
+    Assert Equals(GetCompletion('hog'), ['Hoge', 1])
+    Assert Equals(GetCompletion('ho'), ['Hoge', 1])
+  End
+  It doesn't expand a command if it is a built-in command
+    Assert Equals(GetCompletion('h'), 0)
+    Assert Equals(GetCompletion('f'), 0)
+    Assert Equals(GetCompletion('fo'), 0)
+  End
+  It emulates longest of 'wildmode' feature
+    Assert Equals(GetCompletion('foo'), ['Foo', 0])
+    Assert Equals(GetCompletion('foob'), ['FooBa', 0])
+  End
+  After all
+    delcommand Hoge
+    delcommand FooBar
+    delcommand FooBaz
+    delcommand FooFoo
+    delfunction GetCompletion
+  End
+End
 Describe ambicmd.vim
   Before all
     command! FooFoo put ='FooFoo'
