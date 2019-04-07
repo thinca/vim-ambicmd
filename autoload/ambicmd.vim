@@ -9,6 +9,9 @@
 if !exists('g:ambicmd#build_rule')
   let g:ambicmd#build_rule = 'ambicmd#default_rule'
 endif
+if !exists('g:ambicmd#show_completion_menu')
+  let g:ambicmd#show_completion_menu = 0
+endif
 
 function! ambicmd#default_rule(cmd)
   return [
@@ -296,7 +299,13 @@ function! ambicmd#expand(keys) abort
   if is_fullmatch
     let suffix = a:keys
   elseif is_cmdline
-    let suffix = "\<C-d>"
+    if g:ambicmd#show_completion_menu && &wildmenu && &wildcharm != 0
+      let suffix = nr2char(&wildcharm)
+    else
+      let suffix = "\<C-d>"
+    endif
+  elseif is_cmdwin && g:ambicmd#show_completion_menu
+    let suffix = "\<C-x>\<C-v>"
   else
     let suffix = ''
   endif

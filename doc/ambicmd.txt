@@ -81,7 +81,8 @@ ambicmd#expand({key-sequence})			*ambicmd#expand()*
 	  spaces.)
 	- If the expanding succeeded, returns the command and {key-sequence}.
 	- If the candidates of the command starts by the same phrase, returns
-	  it and <C-d>.
+	  it and keys to list or show completion.  (See
+	  |g:ambicmd#show_completion_menu| for the details.)
 	- Otherwise returns {key-sequence}.
 	See also |ambicmd-setting-examples|.
 
@@ -96,6 +97,21 @@ g:ambicmd#build_rule				*g:ambicmd#build_rule*
 	user-defined commands.
 	See |ambicmd-expanding-rule| for the details.
 	The default value is "ambicmd#default_rule".
+
+g:ambicmd#show_completion_menu		*g:ambicmd#show_completion_menu*
+	|Number|.
+	If this value is non-zero:
+	- When you're in command-line with 'wildmenu' enabled, and
+	  'wildcharm' set, 'wildcharm' will be used to show the completion
+	  menu; otherwise, <C-d> will be used instead in the same way as when
+	  this value is zero.  (You have to set 'wildmode' and 'wildcharm'
+	  option to enable this option in command-line.)
+	- When you're in |cmdline-window|, <C-x><C-v> will be used to show the
+	  completion menu.
+	If this value is zero:
+	- When you're in command-line, <C-d> will be used to list completion.
+	- When you're in |cmdline-window|, nothing will be used.
+	The default value is 0.
 
 
 
