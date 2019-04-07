@@ -1,11 +1,3 @@
-" You can use ambiguous commands.
-" Version: 0.5.1
-" Authors: thinca <thinca+vim@gmail.com>
-"          Shougo <Shougo.Matsu (at) gmail.com>
-"          tyru   <tyru.exe@gmail.com>
-"          mityu  <mityu.email (at) gmail.com>
-" License: zlib License
-
 if !exists('g:ambicmd#build_rule')
   let g:ambicmd#build_rule = 'ambicmd#default_rule'
 endif
