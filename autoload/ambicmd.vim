@@ -5,7 +5,7 @@ if !exists('g:ambicmd#show_completion_menu')
   let g:ambicmd#show_completion_menu = 0
 endif
 
-function! ambicmd#default_rule(cmd)
+function! ambicmd#default_rule(cmd) abort
   return [
   \   '\c^' . a:cmd . '$',
   \   '\c^' . a:cmd,
