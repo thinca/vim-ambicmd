@@ -1,0 +1,5 @@
+runner:
+  vint:
+    cmd: vint .
+    errorformat:
+      - "%f:%l:%c: %m"
