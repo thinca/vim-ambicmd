@@ -1,6 +1,6 @@
 *ambicmd.txt*	You can use ambiguous commands.
 
-Version: 0.5.1
+Version: 0.6.0
 Authors: thinca <thinca+vim@gmail.com>
          Shougo <Shougo.Matsu (at) gmail.com>
          tyru   <tyru.exe@gmail.com>
@@ -168,6 +168,13 @@ TODO						*ambicmd-todo*
 
 ==============================================================================
 CHANGELOG					*ambicmd-changelog*
+
+0.6.0	2019-05-26
+	- Add many improvements by mityu.  Thanks!
+	  - Support :{some-commands} | {command}
+	  - Support :global/{pattern}/{command}
+	  - Support :execute '{command}'
+	  - Add |g:ambicmd#show_completion_menu|.
 
 0.5.1	2015-02-07
 	- Fix problem in Visual-mode.
