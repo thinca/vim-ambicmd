@@ -51,7 +51,7 @@ let s:PATTERN_DOUBLE_QUOTE_PAIR = ['"', s:PATTERN_NON_ESCAPE_CHAR('"')]
 
 " NOTE: Keys are evaluated under very magic.
 let s:TABLE_SPECIAL_CMDS = {
-\   'g%[lobal]': 'global',
+\   'g%[lobal]': "global",
 \   'v%[global]': 'global',
 \   'exe%[cute]': 'execute',
 \   }
@@ -137,7 +137,7 @@ function! s:parse_cmd(cmdline) abort
   let cmdline = a:cmdline
   while 1
     let cmdline = s:remove_range_specifier(cmdline)
-    if cmdline =~# '^\s*$'
+    if cmdline =~ '^\s*$'
       call s:cancel_expanding()
     endif
     let identifier = s:get_identifier_if_special_cmd(cmdline)
