@@ -29,6 +29,8 @@ anchors:
       directories:
         - *cache_dir
         - $HOME/Library/Caches/Homebrew
+        - /usr/local/Homebrew/Library/Homebrew/vendor/
+        - /usr/local/Homebrew/Library/Taps/
     addons:
       homebrew:
         packages:
