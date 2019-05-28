@@ -50,7 +50,15 @@ anchors:
       - |
         if [[ ${VIM_VERSION} = 'latest' ]]; then
           VIM_URL=$(curl -s --retry 3 'https://api.github.com/repos/vim/vim-win32-installer/releases/latest' | jq -r '.assets[] | .browser_download_url' | tr -d '\r' | grep '/gvim_.*_x64\.zip$')
+          if [[ -z "${VIM_URL}" ]]; then
+            echo "Can't get Vim's URL" >&2
+            exit 64
+          fi
           VIM_VERSION=$(echo ${VIM_URL} | sed 's@.*/download/\([^/]*\).*@\1@')
+          if [[ -z "${VIM_VERSION}" ]]; then
+            echo "Can't detect Vim's version from URL(${VIM_URL})" >&2
+            exit 65
+          fi
         fi
       - |
         if [[ ! -d ${HOME}/cache/vim-${VIM_VERSION} ]]; then
@@ -94,20 +102,19 @@ jobs:
       env: VIM_VERSION=latest
     - name: Lint
       if: type = pull_request
+      os: linux
+      dist: xenial
+      language: python
+      python: 3.7
       env:
         - REVIEWDOG_VERSION=v0.9.12
         - VINT_VERSION=0.4a1
-      addons:
-        apt:
-          packages:
-            - python3-pip
       cache:
         pip: true
         directories:
           - *cache_dir
       install:
         - '[[ -x ~/cache/reviewdog ]] || curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b ~/cache ${REVIEWDOG_VERSION}'
-        - pip3 install --user --upgrade setuptools pip
-        - pip3 install --user vim-vint=="${VINT_VERSION}"
+        - pip install vim-vint=="${VINT_VERSION}"
       script:
         - ~/cache/reviewdog -reporter=github-pr-check
