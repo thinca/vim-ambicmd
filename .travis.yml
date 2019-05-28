@@ -49,7 +49,7 @@ anchors:
     install:
       - |
         if [[ ${VIM_VERSION} = 'latest' ]]; then
-          VIM_URL=$(curl -s --retry 3 'https://api.github.com/repos/vim/vim-win32-installer/releases/latest' | jq -r '.assets[] | .browser_download_url' | tr -d '\r' | grep '/gvim_.*_x64\.zip$')
+          VIM_URL=$(curl -s --retry 3 'https://vim-jp.org/redirects/vim/vim-win32-installer/latest/x64.json' | jq -r '.redirect_url')
           if [[ -z "${VIM_URL}" ]]; then
             echo "Can't get Vim's URL" >&2
             exit 64
