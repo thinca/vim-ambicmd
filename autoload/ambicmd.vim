@@ -46,7 +46,7 @@ endfunction
 let s:PATTERN_RANGE = s:generate_range_matcher()
 let s:PATTERN_NON_ESCAPE_WHITESPACE = s:PATTERN_NON_ESCAPE_CHAR('\s', 0)
 let s:PATTERN_NON_ESCAPE_BAR = s:PATTERN_NON_ESCAPE_CHAR('|')
-let s:PATTERN_SINGLE_QUOTE_PAIR = ["'", '\v%(%(\_^|[^''])%('''')*)@<=''([^'']|$)@=']
+let s:PATTERN_SINGLE_QUOTE_PAIR = ["'", '\v%(%(\_^|[^''])%('''')*)@<=''%([^'']|$)@=']
 let s:PATTERN_DOUBLE_QUOTE_PAIR = ['"', s:PATTERN_NON_ESCAPE_CHAR('"')]
 
 " NOTE: Keys are evaluated under very magic.
