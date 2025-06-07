@@ -183,7 +183,7 @@ Describe s:parse_cmd()
 End
 Describe s:get_completion()
   Before all
-    command! Hoge   echo 'Do nothing'
+    command! Piyo   echo 'Do nothing'
     command! FooBar echo 'Do nothing'
     command! FooBaz echo 'Do nothing'
     command! FooFoo echo 'Do nothing'
@@ -197,12 +197,12 @@ Describe s:get_completion()
     endfunction
   End
   It expands an ambiguous command into a user-defined command
-    Assert Equals(GetCompletion('hoge'), ['Hoge', 1])
-    Assert Equals(GetCompletion('hog'), ['Hoge', 1])
-    Assert Equals(GetCompletion('ho'), ['Hoge', 1])
+    Assert Equals(GetCompletion('piyo'), ['Piyo', 1])
+    Assert Equals(GetCompletion('piy'), ['Piyo', 1])
+    Assert Equals(GetCompletion('pi'), ['Piyo', 1])
   End
   It doesn't expand a command if it is a built-in command
-    Assert Equals(GetCompletion('h'), 0)
+    Assert Equals(GetCompletion('p'), 0)
     Assert Equals(GetCompletion('f'), 0)
     Assert Equals(GetCompletion('fo'), 0)
   End
@@ -211,7 +211,7 @@ Describe s:get_completion()
     Assert Equals(GetCompletion('foob'), ['FooBa', 0])
   End
   After all
-    delcommand Hoge
+    delcommand Piyo
     delcommand FooBar
     delcommand FooBaz
     delcommand FooFoo
