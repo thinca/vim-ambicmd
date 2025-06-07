@@ -187,6 +187,7 @@ Describe s:get_completion()
     command! FooBar echo 'Do nothing'
     command! FooBaz echo 'Do nothing'
     command! FooFoo echo 'Do nothing'
+    command! CmdBothGlobalLocal echo 'Do nothing'
 
     function GetCompletion(target)
       try
@@ -210,11 +211,27 @@ Describe s:get_completion()
     Assert Equals(GetCompletion('foo'), ['Foo', 0])
     Assert Equals(GetCompletion('foob'), ['FooBa', 0])
   End
+
+  Context when there's a buffer-local command and global command for the same name
+    Before all
+      command! -buffer CmdBothGlobalLocal echo 'Do nothing'
+    End
+
+    It does not treat buffer-local command and global command as different completion candidates.
+      Assert Equals(GetCompletion('cmdbothgloballocal'), ['CmdBothGlobalLocal', 1])
+    End
+
+    After all
+      %bwipeout!
+    End
+  End
+
   After all
     delcommand Piyo
     delcommand FooBar
     delcommand FooBaz
     delcommand FooFoo
+    delcommand CmdBothGlobalLocal
     delfunction GetCompletion
   End
 End

@@ -70,8 +70,8 @@ function! s:get_cmd_list() abort
   redir => cmdlistredir
   silent! command
   redir END
-  return map(split(cmdlistredir, "\n")[1 :],
-  \   'matchstr(v:val, ''\u\w*'')')
+  return uniq(sort(map(split(cmdlistredir, "\n")[1 :],
+  \   'matchstr(v:val, ''\u\w*'')')))
 endfunction
 
 function! s:get_cmdline_info() abort
