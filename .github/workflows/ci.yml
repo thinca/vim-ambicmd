@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup Vim
         id: vim
         uses: thinca/action-setup-vim@v3
@@ -43,7 +43,7 @@ jobs:
         run: |
           ${{ steps.vim.outputs.executable }} --version
       - name: Setup themis.vim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: thinca/vim-themis
           path: themis
